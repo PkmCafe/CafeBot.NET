@@ -12,6 +12,7 @@ public class PokeDataOffsetsLA
     public IReadOnlyList<long> BoxStartPokemonPointer         { get; } = [0x42BA6B0, 0x1F0, 0x68];
     public IReadOnlyList<long> LinkTradePartnerPokemonPointer { get; } = [0x42BEAD8, 0x188, 0x78, 0x98, 0x58, 0x0];
     public IReadOnlyList<long> LinkTradePartnerNamePointer    { get; } = [0x42ED070, 0xC8, 0x88];
+    public IReadOnlyList<long> LinkTradePartnerInfoPointer    { get; } = [0x42ED070, 0xC8, 0x7C];
     public IReadOnlyList<long> LinkTradePartnerTIDPointer     { get; } = [0x42ED070, 0xC8, 0x78];
     public IReadOnlyList<long> LinkTradePartnerNIDPointer     { get; } = [0x42EA508, 0xE0, 0x8];
     public IReadOnlyList<long> TradePartnerStatusPointer      { get; } = [0x42BEAD8, 0x188, 0x78, 0xBC];

@@ -1,24 +1,29 @@
-﻿using Discord;
+using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using PKHeX.Core;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace SysBot.Pokemon.Discord;
 
-public class DiscordTradeNotifier<T>(T Data, PokeTradeTrainerInfo Info, int Code, SocketUser Trader)
+public class DiscordTradeNotifier<T>(T Data, PokeTradeTrainerInfo Info, int Code, SocketUser Trader, SocketCommandContext Context)
     : IPokeTradeNotifier<T>
     where T : PKM, new()
 {
-    private T Data { get; } = Data;
-    private PokeTradeTrainerInfo Info { get; } = Info;
-    private int Code { get; } = Code;
-    private SocketUser Trader { get; } = Trader;
     public Action<PokeRoutineExecutor<T>>? OnFinish { private get; set; }
     public readonly PokeTradeHub<T> Hub = SysCord<T>.Runner.Hub;
 
     public void TradeInitialize(PokeRoutineExecutor<T> routine, PokeTradeDetail<T> info)
     {
+        if (Hub.Config.Discord.UseTradeEmbeds is TradeEmbedDisplay.TradeInitialize && info.Type is PokeTradeType.Specific)
+        {
+            var embed = new TradeEmbedBuilder<T>(Data, Hub, new QueueUser(Info.ID, Trader.Username));
+            Context.Channel.SendMessageAsync("", embed: embed.Build()).ConfigureAwait(false);
+        }
+
+        // Notify user in private messages
         var receive = Data.Species == 0 ? string.Empty : $" ({Data.Nickname})";
         Trader.SendMessageAsync($"Initializing trade{receive}. Please be ready. Your code is **{Code:0000 0000}**.").ConfigureAwait(false);
     }
@@ -42,8 +47,15 @@ public class DiscordTradeNotifier<T>(T Data, PokeTradeTrainerInfo Info, int Code
         var tradedToUser = Data.Species;
         var message = tradedToUser != 0 ? $"Trade finished. Enjoy your {(Species)tradedToUser}!" : "Trade finished!";
         Trader.SendMessageAsync(message).ConfigureAwait(false);
+
         if (result.Species != 0 && Hub.Config.Discord.ReturnPKMs)
             Trader.SendPKMAsync(result, "Here's what you traded me!").ConfigureAwait(false);
+
+        if (Hub.Config.Discord.UseTradeEmbeds is TradeEmbedDisplay.TradeComplete && info.Type is PokeTradeType.Specific)
+        {
+            var embed = new TradeEmbedBuilder<T>(Data, Hub, new QueueUser(Info.ID, Trader.Username));
+            Context.Channel.SendMessageAsync("", embed: embed.Build()).ConfigureAwait(false);
+        }
     }
 
     public void SendNotification(PokeRoutineExecutor<T> routine, PokeTradeDetail<T> info, string message)

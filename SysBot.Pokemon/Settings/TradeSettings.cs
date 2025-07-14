@@ -44,6 +44,9 @@ public class TradeSettings : IBotStateSettings, ICountSettings
     [Category(TradeConfig), Description("When enabled, disallows requesting Pokémon if they have a HOME Tracker.")]
     public bool DisallowTracked { get; set; } = true;
 
+    [Category(TradeConfig), Description("Use Trade Partner details (OT, TID, SID, Gender), when legally possible.")]
+    public bool UseTradePartnerDetails { get; set; } = false;
+
     /// <summary>
     /// Gets a random trade code based on the range settings.
     /// </summary>

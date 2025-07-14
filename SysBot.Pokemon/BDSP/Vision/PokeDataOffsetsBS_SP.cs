@@ -8,6 +8,7 @@ public class PokeDataOffsetsBS_SP : BasePokeDataOffsetsBS
 
     public override IReadOnlyList<long> LinkTradePartnerPokemonPointer { get; } = [0x4E77488, 0xB8, 0x8, 0x20];
     public override IReadOnlyList<long> LinkTradePartnerNamePointer    { get; } = [0x4E7C9A8, 0xB8, 0x30, 0x110, 0x28, 0x90, 0x20, 0x0];
+    public override IReadOnlyList<long> LinkTradePartnerInfoPointer { get; } = [0x4E7C9A8, 0xB8, 0x30, 0x110, 0x28, 0x90, 0x14];
     public override IReadOnlyList<long> LinkTradePartnerIDPointer      { get; } = [0x4E7C9A8, 0xB8, 0x30, 0x110, 0x28, 0x90, 0x10];
     public override IReadOnlyList<long> LinkTradePartnerParamPointer   { get; } = [0x4E7C9A8, 0xB8, 0x30, 0x110, 0x28, 0x90];
     public override IReadOnlyList<long> LinkTradePartnerNIDPointer     { get; } = [0x4FFE810, 0x70, 0x168, 0x40]; // todo for multi-user Union Room; limited penalties available.

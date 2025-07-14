@@ -1,13 +1,21 @@
-# SysBot.NET
+# ManuBot.NET
 ![License](https://img.shields.io/badge/License-AGPLv3-blue.svg)
 
-## Support Discord:
+## Support Discords:
+Fork of [kwsch](https://github.com/kwsch)'s [SysBot.NET](https://github.com/kwsch/SysBot.NET). 
 
-For support on setting up your own instance of SysBot.NET, feel free to join the discord! (Beware of un-official discords who claim to be official)
+For details about fork-specific features, please refer to the [Wiki](https://github.com/Manu098vm/ManuBot.NET/wiki).
 
-[<img src="https://canary.discordapp.com/api/guilds/401014193211441153/widget.png?style=banner2">](https://discord.gg/tDMvSRv)
 
-[sys-botbase](https://github.com/olliz0r/sys-botbase) client for remote control automation of Nintendo Switch consoles.
+If you need support for this fork, feel free to join our Discord server!
+
+(Support for this fork is not provided in the PKHeX Discord, please do not bother the devs)
+
+[Support Server: Manu's Lair](https://discord.com/invite/yWveAjKbKt)
+
+[<img src="https://canary.discordapp.com/api/guilds/693083823197519873/widget.png?style=banner2">](https://discord.gg/yWveAjKbKt)
+
+Special thanks to [notzyro](https://github.com/zyro670), [santacrab2](https://github.com/santacrab2/), and [9Bitdo](https://github.com/9bitdo/) for their help with code, updates, and ongoing support.
 
 ## SysBot.Base:
 - Base logic library to be built upon in game-specific projects.

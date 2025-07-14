@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using Discord.Commands;
 using PKHeX.Core;
 using System.Threading.Tasks;
@@ -27,14 +27,19 @@ public class LegalityCheckModule : ModuleBase<SocketCommandContext>
 
     private async Task LegalityCheck(IAttachment att, bool verbose)
     {
-        var download = await NetUtil.DownloadPKMAsync(att).ConfigureAwait(false);
+        var download = await NetUtil.DownloadAttachmentAsync(att).ConfigureAwait(false);
         if (!download.Success)
         {
             await ReplyAsync(download.ErrorMessage).ConfigureAwait(false);
             return;
         }
 
-        var pkm = download.Data!;
+        if (download.Data is not PKM pkm)
+        {
+            await ReplyAsync($"The attachment {download.SanitizedFileName} is not a valid PKM file.").ConfigureAwait(false);
+            return;
+        }
+
         var la = new LegalityAnalysis(pkm);
         var builder = new EmbedBuilder
         {

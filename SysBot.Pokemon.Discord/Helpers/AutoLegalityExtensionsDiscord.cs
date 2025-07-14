@@ -20,7 +20,8 @@ public static class AutoLegalityExtensionsDiscord
         try
         {
             var template = AutoLegalityWrapper.GetTemplate(set);
-            var pkm = sav.GetLegal(template, out var result);
+            var isEggRequest = set.Nickname.Equals("Egg", StringComparison.OrdinalIgnoreCase) && Breeding.CanHatchAsEgg(set.Species);
+            var pkm = isEggRequest ? sav.GetLegalEgg(set, out var result) : sav.GetLegal(template, out result);
             var la = new LegalityAnalysis(pkm);
             var spec = GameInfo.Strings.Species[template.Species];
             if (!la.Valid)
@@ -67,14 +68,19 @@ public static class AutoLegalityExtensionsDiscord
 
     public static async Task ReplyWithLegalizedSetAsync(this ISocketMessageChannel channel, IAttachment att)
     {
-        var download = await NetUtil.DownloadPKMAsync(att).ConfigureAwait(false);
+        var download = await NetUtil.DownloadAttachmentAsync(att).ConfigureAwait(false);
         if (!download.Success)
         {
             await channel.SendMessageAsync(download.ErrorMessage).ConfigureAwait(false);
             return;
         }
 
-        var pkm = download.Data!;
+        if (download.Data is not PKM pkm)
+        {
+            await channel.SendMessageAsync($"The attachment {download.SanitizedFileName} is not a valid PKM file.").ConfigureAwait(false);
+            return;
+        }
+
         if (new LegalityAnalysis(pkm).Valid)
         {
             await channel.SendMessageAsync($"{download.SanitizedFileName}: Already legal.").ConfigureAwait(false);

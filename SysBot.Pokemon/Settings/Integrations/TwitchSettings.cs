@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Linq;
+using static System.Net.WebRequestMethods;
 
 namespace SysBot.Pokemon;
 
@@ -27,6 +28,18 @@ public class TwitchSettings
 
     [Category(Operation), Description("Message sent when the Barrier is released.")]
     public string MessageStart { get; set; } = string.Empty;
+
+    [Category(Operation), Description("Link to the Discord server associated with the bot host.")]
+    public string DiscordLink { get; set; } = string.Empty;
+
+    [Category(Operation), Description("Link to support the bot host with donations.")]
+    public string DonationLink { get; set; } = string.Empty;
+
+    [Category(Operation), Description("Text for the bot usage tutorial.")]
+    public string TutorialText { get; set; } = string.Empty;
+
+    [Category(Operation), Description("Link to the bot usage tutorial. It will be appended to the tutorial text.")]
+    public string TutorialLink { get; set; } = string.Empty;
 
     // Messaging
 

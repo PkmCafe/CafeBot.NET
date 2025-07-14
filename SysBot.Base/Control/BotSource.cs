@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -66,6 +68,35 @@ public class BotSource<T>(RoutineExecutor<T> Bot)
             if (ok)
                 Start();
         }, TaskContinuationOptions.RunContinuationsAsynchronously | TaskContinuationOptions.NotOnFaulted);
+    }
+
+    public void RebootAndStop()
+    {
+        Stop();
+        Task.Run(async () =>
+        {
+            try
+            {
+                Bot.Connection.Connect();
+                await Bot.InitialStartup(Source.Token).ConfigureAwait(false);
+
+                var hub = (dynamic)Bot.GetType()
+                    .GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                    .First(f => f.Name.Contains("Hub"))
+                    .GetValue(Bot)!;
+                await ((dynamic)Bot).ReOpenGame(hub.Config, Source.Token).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Bot.Log($"Failed to re-open game: {ex.Message}");
+            }
+            await Bot.HardStop().ConfigureAwait(false);
+            Bot.Connection.Disconnect();
+        })
+        .ContinueWith(ReportFailure, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously)
+        .ContinueWith(_ => IsRunning = false);
+
+        IsRunning = true;
     }
 
     private void ReportFailure(Task finishedTask)

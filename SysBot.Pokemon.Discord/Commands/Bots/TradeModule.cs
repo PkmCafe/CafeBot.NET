@@ -73,7 +73,8 @@ public class TradeModule<T> : ModuleBase<SocketCommandContext> where T : PKM, ne
         try
         {
             var sav = AutoLegalityWrapper.GetTrainerInfo<T>();
-            var pkm = sav.GetLegal(template, out var result);
+            var isEggRequest = set.Nickname.Equals("Egg", StringComparison.OrdinalIgnoreCase) && Breeding.CanHatchAsEgg(set.Species);
+            var pkm = isEggRequest ? sav.GetLegalEgg(set, out var result) : sav.GetLegal(template, out result); ;
             var la = new LegalityAnalysis(pkm);
             var spec = GameInfo.Strings.Species[template.Species];
             pkm = EntityConverter.ConvertToType(pkm, typeof(T), out _) ?? pkm;
@@ -182,7 +183,7 @@ public class TradeModule<T> : ModuleBase<SocketCommandContext> where T : PKM, ne
             return;
         }
 
-        var att = await NetUtil.DownloadPKMAsync(attachment).ConfigureAwait(false);
+        var att = await NetUtil.DownloadAttachmentAsync(attachment).ConfigureAwait(false);
         var pk = GetRequest(att);
         if (pk == null)
         {
@@ -193,16 +194,27 @@ public class TradeModule<T> : ModuleBase<SocketCommandContext> where T : PKM, ne
         await AddTradeToQueueAsync(code, usr.Username, pk, sig, usr).ConfigureAwait(false);
     }
 
-    private static T? GetRequest(Download<PKM> dl)
+    private static T? GetRequest(Download<ISpeciesForm> dl)
     {
         if (!dl.Success)
             return null;
+
         return dl.Data switch
         {
-            null => null,
-            T pk => pk,
-            _ => EntityConverter.ConvertToType(dl.Data, typeof(T), out _) as T,
+            T entity => entity,
+            PKM pkm => ConvertToFormat(pkm),
+            MysteryGift mg => ConvertMysteryGiftToPKM(mg),
+            _ => null,
         };
+
+        static T? ConvertMysteryGiftToPKM(IEncounterable enc)
+        {
+            var trainer = AutoLegalityWrapper.GetTrainerInfo(enc.Generation);
+            var pkm = enc.ConvertToPKM(trainer);
+            return ConvertToFormat(pkm);
+        }
+
+        static T? ConvertToFormat(PKM pkm) => EntityConverter.ConvertToType(pkm, typeof(T), out _) as T;
     }
 
     private async Task AddTradeToQueueAsync(int code, string trainerName, T pk, RequestSignificance sig, SocketUser usr)
@@ -214,18 +226,26 @@ public class TradeModule<T> : ModuleBase<SocketCommandContext> where T : PKM, ne
             return;
         }
 
-        var cfg = Info.Hub.Config.Trade;
+        // Old generation entities are converted with no Handling trainer, resulting in a broken legality analysis.
         var la = new LegalityAnalysis(pk);
+        if (la.Results.Any(memory => memory.Identifier is CheckIdentifier.Memory && !memory.Valid) && pk is IHandlerUpdate h)
+        {
+            h.UpdateHandler(AutoLegalityWrapper.GetTrainerInfo<T>());
+            la = new LegalityAnalysis((T)h);
+        }
+
         if (!la.Valid)
         {
             // Disallow trading illegal Pokémon.
-            await ReplyAsync($"{typeof(T).Name} attachment is not legal, and cannot be traded!").ConfigureAwait(false);
+            await ReplyAsync($"{typeof(T).Name} entity is not legal, and cannot be traded!").ConfigureAwait(false);
             return;
         }
+
+        var cfg = Info.Hub.Config.Trade;
         if (cfg.DisallowNonNatives && (la.EncounterOriginal.Context != pk.Context || pk.GO))
         {
             // Allow the owner to prevent trading entities that require a HOME Tracker even if the file has one already.
-            await ReplyAsync($"{typeof(T).Name} attachment is not native, and cannot be traded!").ConfigureAwait(false);
+            await ReplyAsync($"{typeof(T).Name} entity is not native, and cannot be traded!").ConfigureAwait(false);
             return;
         }
         if (cfg.DisallowTracked && pk is IHomeTrack { HasTracker: true })

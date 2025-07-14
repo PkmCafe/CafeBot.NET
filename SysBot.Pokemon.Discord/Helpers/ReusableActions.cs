@@ -14,7 +14,7 @@ public static class ReusableActions
 {
     public static async Task SendPKMAsync(this IMessageChannel channel, PKM pkm, string msg = "")
     {
-        var tmp = Path.Combine(Path.GetTempPath(), Util.CleanFileName(pkm.FileName));
+        var tmp = Path.Combine(Path.GetTempPath(), PathUtil.CleanFileName(pkm.FileName));
         await File.WriteAllBytesAsync(tmp, pkm.DecryptedPartyData);
         await channel.SendFileAsync(tmp, msg).ConfigureAwait(false);
         File.Delete(tmp);
@@ -22,7 +22,7 @@ public static class ReusableActions
 
     public static async Task SendPKMAsync(this IUser user, PKM pkm, string msg = "")
     {
-        var tmp = Path.Combine(Path.GetTempPath(), Util.CleanFileName(pkm.FileName));
+        var tmp = Path.Combine(Path.GetTempPath(), PathUtil.CleanFileName(pkm.FileName));
         await File.WriteAllBytesAsync(tmp, pkm.DecryptedPartyData);
         await user.SendFileAsync(tmp, msg).ConfigureAwait(false);
         File.Delete(tmp);
@@ -32,11 +32,12 @@ public static class ReusableActions
     {
         if (!EntityDetection.IsSizePlausible(att.Size))
             return;
-        var result = await NetUtil.DownloadPKMAsync(att).ConfigureAwait(false);
+        var result = await NetUtil.DownloadAttachmentAsync(att).ConfigureAwait(false);
         if (!result.Success)
             return;
+        if (result.Data is not PKM pkm)
+            return;
 
-        var pkm = result.Data!;
         await channel.SendPKMAsShowdownSetAsync(pkm).ConfigureAwait(false);
     }
 

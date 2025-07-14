@@ -37,7 +37,8 @@ public static class TwitchCommandsHelper<T> where T : PKM, new()
         try
         {
             var sav = AutoLegalityWrapper.GetTrainerInfo<T>();
-            PKM pkm = sav.GetLegal(template, out var result);
+            var isEggRequest = set.Nickname.Equals("Egg", StringComparison.OrdinalIgnoreCase) && Breeding.CanHatchAsEgg(set.Species);
+            var pkm = isEggRequest ? sav.GetLegalEgg(set, out var result) : sav.GetLegal(template, out result);
 
             if (!pkm.CanBeTraded())
             {

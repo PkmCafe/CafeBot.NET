@@ -40,9 +40,17 @@ public static class AutoLegalityWrapper
         APILegality.AllowTrainerOverride = cfg.AllowTrainerDataOverride;
         APILegality.AllowBatchCommands = cfg.AllowBatchCommands;
         APILegality.PrioritizeGame = cfg.PrioritizeGame;
-        APILegality.PrioritizeGameVersion = cfg.PrioritizeGameVersion;
         APILegality.SetBattleVersion = cfg.SetBattleVersion;
         APILegality.Timeout = cfg.Timeout;
+
+        GameVersion[] validVersions = [.. Enum.GetValues<GameVersion>().Where(ver => ver > GameVersion.Any && ver <= LegalitySettings.LatestGameVersion).Reverse()];
+        foreach (var ver in validVersions)
+        {
+            if (!cfg.PriorityOrder.Contains(ver))
+                cfg.PriorityOrder.Add(ver);
+        }
+
+        APILegality.PriorityOrder = cfg.PriorityOrder;
 
         var settings = ParseSettings.Settings;
 
@@ -102,7 +110,7 @@ public static class AutoLegalityWrapper
             OT = fallback.OT,
             Generation = generation,
         };
-        var exist = TrainerSettings.GetSavedTrainerData(version, generation, fallback);
+        var exist = TrainerSettings.GetSavedTrainerData(generation, version, fallback);
         if (exist is SimpleTrainerInfo) // not anything from files; this assumes ALM returns SimpleTrainerInfo for non-user-provided fake templates.
             TrainerSettings.Register(fallback);
     }
@@ -155,13 +163,13 @@ public static class AutoLegalityWrapper
     public static ITrainerInfo GetTrainerInfo<T>() where T : PKM, new()
     {
         if (typeof(T) == typeof(PK8))
-            return TrainerSettings.GetSavedTrainerData(GameVersion.SWSH, 8);
+            return TrainerSettings.GetSavedTrainerData(8, GameVersion.SWSH);
         if (typeof(T) == typeof(PB8))
-            return TrainerSettings.GetSavedTrainerData(GameVersion.BDSP, 8);
+            return TrainerSettings.GetSavedTrainerData(8, GameVersion.BDSP);
         if (typeof(T) == typeof(PA8))
-            return TrainerSettings.GetSavedTrainerData(GameVersion.PLA, 8);
+            return TrainerSettings.GetSavedTrainerData(8, GameVersion.PLA);
         if (typeof(T) == typeof(PK9))
-            return TrainerSettings.GetSavedTrainerData(GameVersion.SV, 9);
+            return TrainerSettings.GetSavedTrainerData(9, GameVersion.SV);
 
         throw new ArgumentException("Type does not have a recognized trainer fetch.", typeof(T).Name);
     }
@@ -180,6 +188,20 @@ public static class AutoLegalityWrapper
             _ => "",
         };
         return result.Created;
+    }
+
+    public static PKM GetLegalEgg(this ITrainerInfo sav, ShowdownSet set, out string res)
+    {
+        var created = sav.GenerateEgg(set, out var status);
+        res = status switch
+        {
+            LegalizationResult.Regenerated      => "Regenerated",
+            LegalizationResult.Failed           => "Failed",
+            LegalizationResult.Timeout          => "Timeout",
+            LegalizationResult.VersionMismatch  => "VersionMismatch",
+            _ => "",
+        };
+        return created;
     }
 
     public static string GetLegalizationHint(IBattleTemplate set, ITrainerInfo sav, PKM pk) => set.SetAnalysis(sav, pk);

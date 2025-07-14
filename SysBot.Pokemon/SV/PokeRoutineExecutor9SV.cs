@@ -106,9 +106,9 @@ public abstract class PokeRoutineExecutor9SV(PokeBotState Config) : PokeRoutineE
         return sav;
     }
 
-    public async Task<TradeMyStatus> GetTradePartnerMyStatus(IReadOnlyList<long> pointer, CancellationToken token)
+    public async Task<TradeMyStatus9> GetTradePartnerMyStatus(IReadOnlyList<long> pointer, CancellationToken token)
     {
-        var info = new TradeMyStatus();
+        var info = new TradeMyStatus9();
         var read = await SwitchConnection.PointerPeek(info.Data.Length, pointer, token).ConfigureAwait(false);
         read.CopyTo(info.Data, 0);
         return info;

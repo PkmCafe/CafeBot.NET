@@ -188,6 +188,24 @@ public sealed partial class Main : Form
         SendAll(cmd);
     }
 
+    private void B_RebootStop_Click(object sender, EventArgs e)
+    {
+        if (RunningEnvironment.IsRunning)
+        {
+            B_Stop_Click(sender, e);
+            Task.Run(async () => { await Task.Delay(3_000).ConfigureAwait(false); });
+        }
+
+        SaveCurrentConfig();
+        LogUtil.LogInfo("Restarting all the consoles...", "Form");
+        RunningEnvironment.InitializeStart();
+        SendAll(BotControlCommand.RebootAndStop);
+        Tab_Logs.Select();
+
+        if (Bots.Count == 0)
+            WinFormsUtil.Alert("No bots configured, but all supporting services have been issued the reboot command.");
+    }
+
     private void B_New_Click(object sender, EventArgs e)
     {
         var cfg = CreateNewBotConfig();

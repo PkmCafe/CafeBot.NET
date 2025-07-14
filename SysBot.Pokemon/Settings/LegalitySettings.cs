@@ -1,6 +1,8 @@
-﻿using PKHeX.Core;
+using PKHeX.Core;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace SysBot.Pokemon;
 
@@ -10,6 +12,8 @@ public class LegalitySettings
     private const string Generate = nameof(Generate);
     private const string Misc = nameof(Misc);
     public override string ToString() => "Legality Generating Settings";
+
+    public static GameVersion LatestGameVersion => GameVersion.VL;
 
     // Generate
     [Category(Generate), Description("MGDB directory path for Wonder Cards.")]
@@ -30,19 +34,19 @@ public class LegalitySettings
     }
 
     [Category(Generate), Description("Default 16-bit Trainer ID (TID) for requests that don't match any of the provided trainer data files. This should be a 5-digit number.")]
-    public ushort GenerateTID16 { get; set; } = 12345;
+    public ushort GenerateTID16 { get; set; } = 44510;
 
     [Category(Generate), Description("Default 16-bit Secret ID (SID) for requests that don't match any of the provided trainer data files. This should be a 5-digit number.")]
-    public ushort GenerateSID16 { get; set; } = 54321;
+    public ushort GenerateSID16 { get; set; } = 61374;
 
     [Category(Generate), Description("Default language for PKM files that don't match any of the provided PKM files.")]
     public LanguageID GenerateLanguage { get; set; } = LanguageID.English;
 
-    [Category(Generate), Description("If PrioritizeGame is set to \"True\", uses PrioritizeGameVersion to start looking for encounters. If \"False\", uses newest game as the version. It is recommended to leave this as \"True\".")]
+    [Category(Generate), Description("If PrioritizeGame is set to \"True\", uses PriorityOrder to start looking for encounters. If \"False\", uses newest game as the version. It is recommended to leave this as \"True\".")]
     public bool PrioritizeGame { get; set; } = true;
 
-    [Category(Generate), Description("Specifies the first game to use to generate encounters, or current game if this field is set to \"Any\". Set PrioritizeGame to \"true\" to enable. It is recommended to leave this as \"Any\".")]
-    public GameVersion PrioritizeGameVersion { get; set; } = GameVersion.Any;
+    [Category(Generate), Description("The order of Game Versions ALM will attempt to legalize from.")]
+    public List<GameVersion> PriorityOrder { get; set; } = [.. Enum.GetValues<GameVersion>().Where(ver => ver > GameVersion.Any && ver <= LatestGameVersion).Reverse()];
 
     [Category(Generate), Description("Set all possible legal ribbons for any generated Pokémon.")]
     public bool SetAllLegalRibbons { get; set; }
@@ -85,5 +89,8 @@ public class LegalitySettings
     // Misc
 
     [Category(Misc), Description("Zero out HOME trackers for cloned and user-requested PKM files. It is recommended to leave this disabled to avoid creating invalid HOME data.")]
-    public bool ResetHOMETracker { get; set; }
+    public bool ResetHOMETracker { get; set; } = false;
+
+    [Category(Misc), Description("Override Pokémon OT info with trade partner OT for non-Native Pokémon or version-exclusive Pokémon. UseTradePartnerDetails (Trade Settings) must also be set to True.")]
+    public bool ForceTradePartnerDetails { get; set; } = false;
 }

@@ -29,6 +29,7 @@ public static class QueueHelper<T> where T : PKM, new()
 
             // Notify in channel
             await context.Channel.SendMessageAsync(msg).ConfigureAwait(false);
+
             // Notify in PM to mirror what is said in the channel.
             await trader.SendMessageAsync($"{msg}\nYour trade code will be **{code:0000 0000}**.").ConfigureAwait(false);
 
@@ -63,7 +64,7 @@ public static class QueueHelper<T> where T : PKM, new()
         var name = user.Username;
 
         var trainer = new PokeTradeTrainerInfo(trainerName, userID);
-        var notifier = new DiscordTradeNotifier<T>(pk, trainer, code, user);
+        var notifier = new DiscordTradeNotifier<T>(pk, trainer, code, user, context);
         var detail = new PokeTradeDetail<T>(pk, trainer, notifier, t, code, sig == RequestSignificance.Favored);
         var trade = new TradeEntry<T>(detail, userID, type, name);
 
@@ -86,14 +87,19 @@ public static class QueueHelper<T> where T : PKM, new()
         var pokeName = "";
         if (t == PokeTradeType.Specific && pk.Species != 0)
             pokeName = $" Receiving: {GameInfo.GetStrings("en").Species[pk.Species]}.";
-        msg = $"{user.Mention} - Added to the {type} queue{ticketID}. Current Position: {position.Position}.{pokeName}";
+        msg = $"{user.Mention} - Added to the {type} queue{ticketID}. {pokeName} ";
 
-        var botct = Info.Hub.Bots.Count;
-        if (position.Position > botct)
+        if (!(hub.Config.Discord.UseTradeEmbeds is TradeEmbedDisplay.TradeInitialize && t is PokeTradeType.Specific))
         {
-            var eta = Info.Hub.Config.Queues.EstimateDelay(position.Position, botct);
-            msg += $" Estimated: {eta:F1} minutes.";
+            msg += $"Current Position: {position.Position}.";
+            var botct = Info.Hub.Bots.Count;
+            if (position.Position > botct)
+            {
+                var eta = Info.Hub.Config.Queues.EstimateDelay(position.Position, botct);
+                msg += $" Estimated: {eta:F1} minutes.";
+            }
         }
+
         return true;
     }
 
