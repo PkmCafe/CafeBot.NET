@@ -1,11 +1,11 @@
 # ManuBot.NET
 ![License](https://img.shields.io/badge/License-AGPLv3-blue.svg)
 
-## Support Discords:
 Fork of [kwsch](https://github.com/kwsch)'s [SysBot.NET](https://github.com/kwsch/SysBot.NET). 
 
 For details about fork-specific features, please refer to the [Wiki](https://github.com/Manu098vm/ManuBot.NET/wiki).
 
+## Support Discords:
 
 If you need support for this fork, feel free to join our Discord server!
 
