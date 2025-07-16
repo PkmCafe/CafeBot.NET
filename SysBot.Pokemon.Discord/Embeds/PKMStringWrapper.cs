@@ -48,7 +48,7 @@ internal class PKMStringWrapper<T>(T PKM, TradeEmbedSettings Config) where T : P
             if (PKM.Moves[i] is { } move && move is not (ushort)Move.None)
             {
                 var type = (MoveType)MoveInfo.GetType(move, PKM.Context);
-                var emoji = $"{(Config.UseMoveEmoji ? $"<:TypeEmoji:{Config.TypesEmojiCodes.GetEmojiCode(type)}>" : "")}";
+                var emoji = $"{(Config.UseMoveEmoji ? $"<:TypeEmoji:{Config.TypesEmojiCodes.GetEmojiCode(type)}> " : "")}";
                 var name = GameStrings.movelist[move];
                 var pp = Config.ShowMovePP ? i switch
                 {
