@@ -124,7 +124,7 @@ public class TradeEmbedBuilder<T>(T PKM, PokeTradeHub<T> Hub, QueueUser trader) 
     }
 
     private Color InitializeColor() =>
-        PKM.IsShiny && PKM.ShinyXor == 0 ? Color.Gold : PKM.IsShiny ? Color.LighterGrey : Color.Teal;
+        PKM.IsShiny && (PKM.ShinyXor == 0 || PKM.FatefulEncounter) ? Color.Gold : PKM.IsShiny ? Color.LighterGrey : Color.Teal;
 
     private EmbedAuthorBuilder InitializeAuthor() => new()
     {
