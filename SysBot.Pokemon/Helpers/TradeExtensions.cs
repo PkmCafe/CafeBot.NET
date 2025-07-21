@@ -134,7 +134,7 @@ public class TradeExtensions<T> where T : PKM, new()
 
     private static bool HasRequestedTrainerDetails(T requested)
     {
-        var host_trainer = AutoLegalityWrapper.GetTrainerInfo(requested.Generation);
+        var host_trainer = AutoLegalityWrapper.GetTrainerInfo<T>();
 
         if (!requested.OriginalTrainerName.Equals(host_trainer.OT))
             return true;
