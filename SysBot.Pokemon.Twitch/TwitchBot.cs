@@ -212,10 +212,10 @@ public class TwitchBot<T> where T : PKM, new()
             // User Usable Commands
             case "donate":
                 return !string.IsNullOrWhiteSpace(Settings.DonationLink) ?
-                    $"Here's the donation link! Thank you for your support :3 {Settings.DonationLink}" : string.Empty;
+                    $"Wanna buy us a coffee? Thank you for your support! Here's our Donation link. {Settings.DonationLink}" : string.Empty;
             case "discord":
                 return !string.IsNullOrWhiteSpace(Settings.DonationLink) ?
-                    $"Here's the Discord Server Link, have a nice stay :3 {Settings.DiscordLink}" : string.Empty;
+                    $"Here's the Discord Server Link! Join Us for Coffee & Pokémon! {Settings.DiscordLink}" : string.Empty;
             case "tutorial":
             case "help":
                 return $"{Settings.TutorialText} {Settings.TutorialLink}";

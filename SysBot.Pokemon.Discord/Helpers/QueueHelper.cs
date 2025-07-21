@@ -74,7 +74,7 @@ public static class QueueHelper<T> where T : PKM, new()
 
         if (added == QueueResultAdd.AlreadyInQueue)
         {
-            msg = "Sorry, you are already in the queue.";
+            msg = "Bruh, you are already in the queue. Drink a coffee & be patient.";
             return false;
         }
 
@@ -96,7 +96,7 @@ public static class QueueHelper<T> where T : PKM, new()
             if (position.Position > botct)
             {
                 var eta = Info.Hub.Config.Queues.EstimateDelay(position.Position, botct);
-                msg += $" Estimated: {eta:F1} minutes.";
+                msg += $" ETA: {eta:F1} minutes.";
             }
         }
 
