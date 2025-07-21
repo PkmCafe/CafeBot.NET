@@ -21,7 +21,7 @@ public static class QueueHelper<T> where T : PKM, new()
 
         try
         {
-            const string helper = "I've added you to the queue! I'll message you here when your trade is starting.";
+            const string helper = "I've added you to the café queue! I'll message you here when your trade is starting.";
             IUserMessage test = await trader.SendMessageAsync(helper).ConfigureAwait(false);
 
             // Try adding
@@ -31,7 +31,7 @@ public static class QueueHelper<T> where T : PKM, new()
             await context.Channel.SendMessageAsync(msg).ConfigureAwait(false);
 
             // Notify in PM to mirror what is said in the channel.
-            await trader.SendMessageAsync($"{msg}\nYour trade code will be **{code:0000 0000}**.").ConfigureAwait(false);
+            await trader.SendMessageAsync($"{msg}\nYour Trade Code will be **{code:0000 0000}**.").ConfigureAwait(false);
 
             // Clean Up
             if (result)

@@ -25,14 +25,14 @@ public class DiscordTradeNotifier<T>(T Data, PokeTradeTrainerInfo Info, int Code
 
         // Notify user in private messages
         var receive = Data.Species == 0 ? string.Empty : $" ({Data.Nickname})";
-        Trader.SendMessageAsync($"Initializing trade{receive}. Please be ready. Your code is **{Code:0000 0000}**.").ConfigureAwait(false);
+        Trader.SendMessageAsync($"Starting trade{receive}. Please be ready. Your code is **{Code:0000 0000}**.").ConfigureAwait(false);
     }
 
     public void TradeSearching(PokeRoutineExecutor<T> routine, PokeTradeDetail<T> info)
     {
         var name = Info.TrainerName;
         var trainer = string.IsNullOrEmpty(name) ? string.Empty : $", {name}";
-        Trader.SendMessageAsync($"I'm waiting for you{trainer}! Your code is **{Code:0000 0000}**. My IGN is **{routine.InGameName}**.").ConfigureAwait(false);
+        Trader.SendMessageAsync($"Hurry up {trainer}! I'm waiting for you! Your Trade Code is **{Code:0000 0000}**. My Trainer Name is **{routine.InGameName}**.").ConfigureAwait(false);
     }
 
     public void TradeCanceled(PokeRoutineExecutor<T> routine, PokeTradeDetail<T> info, PokeTradeResult msg)
@@ -49,7 +49,7 @@ public class DiscordTradeNotifier<T>(T Data, PokeTradeTrainerInfo Info, int Code
         Trader.SendMessageAsync(message).ConfigureAwait(false);
 
         if (result.Species != 0 && Hub.Config.Discord.ReturnPKMs)
-            Trader.SendPKMAsync(result, "Here's what you traded me!").ConfigureAwait(false);
+            Trader.SendPKMAsync(result, "Here's the shit 'mon you sent me!").ConfigureAwait(false);
 
         if (Hub.Config.Discord.UseTradeEmbeds is TradeEmbedDisplay.TradeComplete && info.Type is PokeTradeType.Specific)
         {
