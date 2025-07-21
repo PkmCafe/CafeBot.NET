@@ -6,10 +6,10 @@ namespace SysBot.Pokemon;
 
 public static class StringsUtil
 {
-    private static readonly System.Buffers.SearchValues<char> adBadList = System.Buffers.SearchValues.Create(".\\/,*;．・。");
+    private static readonly System.Buffers.SearchValues<char> adBadList = System.Buffers.SearchValues.Create("\\,*;");
 
-    private static readonly string[] TLD = ["tv", "gg", "yt"];
-    private static readonly string[] TLD2 = ["com", "org", "net"];
+    private static readonly string[] TLD = ["vv", "fk", "ti"];
+    private static readonly string[] TLD2 = ["xyz", "zyx", "yzx"];
 
     /// <summary>
     /// Remove all non-alphanumeric characters, convert wide chars to narrow, and converts the final string to lowercase.
@@ -63,7 +63,7 @@ public static class StringsUtil
     {
         const StringComparison mode = StringComparison.Ordinal;
 
-        if (text.Contains("pkm", mode))
+        if (text.Contains("abq", mode))
             return true;
 
         foreach (var tld in TLD)
