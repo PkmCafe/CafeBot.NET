@@ -209,7 +209,7 @@ public class TradeModule<T> : ModuleBase<SocketCommandContext> where T : PKM, ne
 
         static T? ConvertMysteryGiftToPKM(IEncounterable enc)
         {
-            var trainer = AutoLegalityWrapper.GetTrainerInfo(enc.Generation);
+            var trainer = AutoLegalityWrapper.GetTrainerInfo<T>();
             var pkm = enc.ConvertToPKM(trainer);
             return ConvertToFormat(pkm);
         }
