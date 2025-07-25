@@ -147,7 +147,7 @@ public class TradeEmbedBuilder<T>(T PKM, PokeTradeHub<T> Hub, QueueUser trader) 
             if (position.Position > botCount)
             {
                 var eta = Hub.Config.Queues.EstimateDelay(position.Position, botCount);
-                footerText += $"{Environment.NewLine}Estimated wait time: {eta:F1} minutes.";
+                footerText += $"{Environment.NewLine}ETA: {eta:F1} minutes.";
             }
         }
         else if (type is TradeEmbedDisplay.TradeComplete)
