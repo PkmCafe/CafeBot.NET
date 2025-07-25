@@ -153,7 +153,7 @@ public class TradeEmbedBuilder<T>(T PKM, PokeTradeHub<T> Hub, QueueUser trader) 
         else if (type is TradeEmbedDisplay.TradeComplete)
         {
             footerText += $"OT: {PKM.OriginalTrainerName} | TID: {PKM.DisplayTID}" +
-                          $"{Environment.NewLine}Café brewed to perfection while your trade finished.\n Leave a Donation or Become a Sage: https://ko-fi.com/PkmCafe";
+                          $"{Environment.NewLine}Leave a Donation | Become a Sage: https://ko-fi.com/PkmCafe";
         }
 
         return new EmbedFooterBuilder { Text = footerText };
