@@ -32,7 +32,7 @@ public class DiscordTradeNotifier<T>(T Data, PokeTradeTrainerInfo Info, int Code
     {
         var name = Info.TrainerName;
         var trainer = string.IsNullOrEmpty(name) ? string.Empty : $", {name}";
-        Trader.SendMessageAsync($"Hurry up {trainer}! I'm waiting for you! Your Trade Code is **{Code:0000 0000}**. My Trainer Name is **{routine.InGameName}**.").ConfigureAwait(false);
+        Trader.SendMessageAsync($"Hurry up {trainer}! I'm Waiting for you! Your Trade Code is **{Code:0000 0000}**. My Trainer Name is **{routine.InGameName}**.").ConfigureAwait(false);
     }
 
     public void TradeCanceled(PokeRoutineExecutor<T> routine, PokeTradeDetail<T> info, PokeTradeResult msg)
@@ -45,7 +45,7 @@ public class DiscordTradeNotifier<T>(T Data, PokeTradeTrainerInfo Info, int Code
     {
         OnFinish?.Invoke(routine);
         var tradedToUser = Data.Species;
-        var message = tradedToUser != 0 ? $"Trade finished. Enjoy your {(Species)tradedToUser}!" : "Trade finished!";
+        var message = tradedToUser != 0 ? $"Café brewed to perfection while your trade finished. Enjoy your {(Species)tradedToUser}!" : "Become a Sage | Leave a Donation:\n https://ko-fi.com/PkmCafe";
         Trader.SendMessageAsync(message).ConfigureAwait(false);
 
         if (result.Species != 0 && Hub.Config.Discord.ReturnPKMs)
